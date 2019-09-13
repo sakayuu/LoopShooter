@@ -1,6 +1,6 @@
 ﻿// このファイルで必要なライブラリのnamespaceを指定
-using LS.Def;
 using LS.Device;
+using LS.Scene;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -18,12 +18,10 @@ namespace LS
     {
         // フィールド（このクラスの情報を記述）
         private GraphicsDeviceManager graphicsDeviceManager;//グラフィックスデバイスを管理するオブジェクト
-        //private SpriteBatch spriteBatch;//画像をスクリーン上に描画するためのオブジェクト
+        private SpriteBatch spriteBatch;//画像をスクリーン上に描画するためのオブジェクト
+        private SceneManager sceneManager;
         private GameDevice gameDevice;
         private Renderer renderer;
-
-
-
         /// <summary>
         /// コンストラクタ
         /// （new で実体生成された際、一番最初に一回呼び出される）
@@ -34,9 +32,6 @@ namespace LS
             graphicsDeviceManager = new GraphicsDeviceManager(this);
             //コンテンツデータ（リソースデータ）のルートフォルダは"Contentに設定
             Content.RootDirectory = "Content";
-
-            graphicsDeviceManager.PreferredBackBufferWidth = Screen.Width;
-            graphicsDeviceManager.PreferredBackBufferHeight = Screen.Height;
 
             Window.Title = "LoopShooter";
         }
@@ -49,8 +44,12 @@ namespace LS
             // この下にロジックを記述
             gameDevice = GameDevice.Instance(Content, GraphicsDevice);
 
-
-
+            sceneManager = new SceneManager();
+            sceneManager.Add(Scene.Scene.Title, new SceneFader(new Title()));
+            IScene addScene = new GamePlay();
+            sceneManager.Add(Scene.Scene.GamePlay, addScene);
+            sceneManager.Add(Scene.Scene.Ending, new SceneFader(new Ending(addScene)));
+            sceneManager.Change(Scene.Scene.Title);
             // この上にロジックを記述
             base.Initialize();// 親クラスの初期化処理呼び出し。絶対に消すな！！
         }
@@ -62,14 +61,15 @@ namespace LS
         protected override void LoadContent()
         {
             // 画像を描画するために、スプライトバッチオブジェクトの実体生成
-            //spriteBatch = new SpriteBatch(GraphicsDevice);
             renderer = gameDevice.GetRenderer();
 
             // この下にロジックを記述
             string filepath = "./Texture/";
-            renderer.LoadContent("stage", filepath);
-            renderer.LoadContent("black", filepath);
-
+            //renderer.LoadContent("title");
+            renderer.LoadContent("stage",filepath);
+            Sound sound = gameDevice.GetSound();
+            string filepath2 = "./Sound/";
+            sound.LoadBGM("titlebgm", filepath2);
             // この上にロジックを記述
         }
 
@@ -101,8 +101,7 @@ namespace LS
 
             // この下に更新ロジックを記述
             gameDevice.Update(gameTime);
-            DrawT(renderer);
-
+            sceneManager.Update(gameTime);
             // この上にロジックを記述
             base.Update(gameTime); // 親クラスの更新処理呼び出し。絶対に消すな！！
         }
@@ -117,18 +116,10 @@ namespace LS
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // この下に描画ロジックを記述
-            renderer.DrawTexture("stage", Vector2.Zero);
+            sceneManager.Draw(renderer);
 
             //この上にロジックを記述
             base.Draw(gameTime); // 親クラスの更新処理呼び出し。絶対に消すな！！
-        }
-
-
-        void DrawT(Renderer renderer)
-        {
-            renderer.Begin();
-            renderer.DrawTexture("stage", Vector2.Zero);
-            renderer.End();
         }
     }
 }

@@ -18,7 +18,7 @@ namespace LS.Scene
 
         public void Draw(Renderer renderer)
         {
-            throw new NotImplementedException();
+            
         }
 
         public void Initialize()
