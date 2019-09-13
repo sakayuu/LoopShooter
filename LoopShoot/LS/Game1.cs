@@ -1,4 +1,6 @@
 ﻿// このファイルで必要なライブラリのnamespaceを指定
+using LS.Def;
+using LS.Device;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -16,7 +18,11 @@ namespace LS
     {
         // フィールド（このクラスの情報を記述）
         private GraphicsDeviceManager graphicsDeviceManager;//グラフィックスデバイスを管理するオブジェクト
-        private SpriteBatch spriteBatch;//画像をスクリーン上に描画するためのオブジェクト
+        //private SpriteBatch spriteBatch;//画像をスクリーン上に描画するためのオブジェクト
+        private GameDevice gameDevice;
+        private Renderer renderer;
+
+
 
         /// <summary>
         /// コンストラクタ
@@ -29,6 +35,9 @@ namespace LS
             //コンテンツデータ（リソースデータ）のルートフォルダは"Contentに設定
             Content.RootDirectory = "Content";
 
+            graphicsDeviceManager.PreferredBackBufferWidth = Screen.Width;
+            graphicsDeviceManager.PreferredBackBufferHeight = Screen.Height;
+
             Window.Title = "LoopShooter";
         }
 
@@ -38,6 +47,7 @@ namespace LS
         protected override void Initialize()
         {
             // この下にロジックを記述
+            gameDevice = GameDevice.Instance(Content, GraphicsDevice);
 
 
 
@@ -52,10 +62,13 @@ namespace LS
         protected override void LoadContent()
         {
             // 画像を描画するために、スプライトバッチオブジェクトの実体生成
-            spriteBatch = new SpriteBatch(GraphicsDevice);
+            //spriteBatch = new SpriteBatch(GraphicsDevice);
+            renderer = gameDevice.GetRenderer();
 
             // この下にロジックを記述
-
+            string filepath = "./Texture/";
+            renderer.LoadContent("stage", filepath);
+            renderer.LoadContent("black", filepath);
 
             // この上にロジックを記述
         }
@@ -87,6 +100,8 @@ namespace LS
             }
 
             // この下に更新ロジックを記述
+            gameDevice.Update(gameTime);
+            DrawT(renderer);
 
             // この上にロジックを記述
             base.Update(gameTime); // 親クラスの更新処理呼び出し。絶対に消すな！！
@@ -102,10 +117,18 @@ namespace LS
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // この下に描画ロジックを記述
-
+            renderer.DrawTexture("stage", Vector2.Zero);
 
             //この上にロジックを記述
             base.Draw(gameTime); // 親クラスの更新処理呼び出し。絶対に消すな！！
+        }
+
+
+        void DrawT(Renderer renderer)
+        {
+            renderer.Begin();
+            renderer.DrawTexture("stage", Vector2.Zero);
+            renderer.End();
         }
     }
 }

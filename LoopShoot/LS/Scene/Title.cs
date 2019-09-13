@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LS.Device;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -16,11 +17,12 @@ namespace LS.Scene
 
         }
 
-        //public void Draw(Renderer renderer)
-        //{
-        //    renderer.Bigin();
-        //    renderer.End();
-        //}
+        public void Draw(Renderer renderer)
+        {
+            renderer.Begin();
+            renderer.DrawTexture("stage", Vector2.Zero);
+            renderer.End();
+        }
 
         public void Initialize()
         {
@@ -39,12 +41,12 @@ namespace LS.Scene
 
         public void Shutdown()
         {
-            
+
         }
 
         public void Update(GameTime gameTime)
         {
-            
+
         }
     }
 }

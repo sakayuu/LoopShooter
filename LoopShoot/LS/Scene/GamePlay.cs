@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LS.Device;
 using Microsoft.Xna.Framework;
 namespace LS.Scene
 {
@@ -13,6 +14,11 @@ namespace LS.Scene
         public GamePlay()
         {
             IsEndFlag = false;
+        }
+
+        public void Draw(Renderer renderer)
+        {
+            throw new NotImplementedException();
         }
 
         public void Initialize()
