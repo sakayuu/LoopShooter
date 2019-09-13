@@ -54,6 +54,8 @@
     <Compile Include="Scene\GamePlay.cs" />
     <Compile Include="Scene\IScene.cs" />
     <Compile Include="Scene\Scene.cs" />
+    <Compile Include="Scene\SceneFader.cs" />
+    <Compile Include="Scene\SceneManager.cs" />
     <Compile Include="Scene\Title.cs" />
   </ItemGroup>
   <ItemGroup>
