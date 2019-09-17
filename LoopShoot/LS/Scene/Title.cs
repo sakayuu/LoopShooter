@@ -12,7 +12,6 @@ namespace LS.Scene
     class Title : IScene
     {
         private bool IsEndFlag;
-        IScene backGroundScene;
         private Sound sound;
 
         public Title()
@@ -20,7 +19,7 @@ namespace LS.Scene
             IsEndFlag = false;
             var gameDevice = GameDevice.Instance();
             sound = gameDevice.GetSound();
-            
+
         }
 
         public void Draw(Renderer renderer)
@@ -28,7 +27,7 @@ namespace LS.Scene
             //backGroundScene.Draw(renderer);
 
             renderer.Begin();
-            renderer.DrawTexture("stage", Vector2.Zero);
+            renderer.DrawTexture("LS", Vector2.Zero);
             renderer.End();
         }
 
@@ -55,9 +54,11 @@ namespace LS.Scene
         public void Update(GameTime gameTime)
         {
             sound.PlayBGM("titlebgm");
+
             if (Input.GetKeyTrigger(Keys.Space))
             {
                 IsEndFlag = true;
+                sound.PlaySE("titlese");
             }
         }
     }

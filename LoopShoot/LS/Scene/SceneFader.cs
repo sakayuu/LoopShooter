@@ -1,15 +1,21 @@
-﻿using LS.Device;
+﻿using LS.Def;
+using LS.Device;
+using LS.Util;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LS.Scene 
+namespace LS.Scene
 {
     class SceneFader : IScene
     {
+        /// <summary>
+        /// フェードシーン状態の列挙型
+        /// </summary>
         private enum SceneFaderState
         {
             In,
@@ -17,7 +23,7 @@ namespace LS.Scene
             None
         };
 
-        //private Timer timer;//フェード時間
+        private Timer timer;//フェード時間
         private readonly float FADE_TIME = 0.5f;//1.0＝１秒で
         private SceneFaderState state;//状態
         private IScene scene;//現在のシーン
@@ -56,7 +62,7 @@ namespace LS.Scene
         {
             scene.Initialize();
             state = SceneFaderState.In;
-            //timer = new CountDownTimer(FADE_TIME);
+            timer = new CountDownTimer(FADE_TIME);
             isEndFlag = false;
         }
 
@@ -105,8 +111,8 @@ namespace LS.Scene
         {
             scene.Update(gameTime);//シーンの更新
             if (scene.IsEnd()) { state = SceneFaderState.Out; }
-            //timer.Update(gameTime);//時間の更新
-            //if (timer.IsTime()) { state = SceneFaderState.None; }
+            timer.Update(gameTime);//時間の更新
+            if (timer.IsTime()) { state = SceneFaderState.None; }
         }
 
         /// <summary>
@@ -116,7 +122,7 @@ namespace LS.Scene
         private void DrawFadeIn(Renderer renderer)
         {
             scene.Draw(renderer);
-            //DrawEffect(renderer, 1 - timer.Rate());
+            DrawEffect(renderer, 1 - timer.Rate());
         }
 
         /// <summary>
@@ -127,8 +133,8 @@ namespace LS.Scene
         {
             scene.Update(gameTime);//シーンの更新
             if (scene.IsEnd()) { state = SceneFaderState.Out; }
-            //timer.Update(gameTime);//時間の更新
-            //if (timer.IsTime()) { isEndFlag = true; }
+            timer.Update(gameTime);//時間の更新
+            if (timer.IsTime()) { isEndFlag = true; }
         }
 
         /// <summary>
@@ -138,7 +144,7 @@ namespace LS.Scene
         private void DrawFadeOut(Renderer renderer)
         {
             scene.Draw(renderer);
-            //DrawEffect(renderer, timer.Rate());
+            DrawEffect(renderer, timer.Rate());
         }
 
         /// <summary>
@@ -151,7 +157,7 @@ namespace LS.Scene
             if (scene.IsEnd())
             {
                 state = SceneFaderState.Out;
-                //timer.Initialize();
+                timer.Initialize();
             }
         }
 
@@ -159,7 +165,8 @@ namespace LS.Scene
         /// フェードなし状態の描画
         /// </summary>
         /// <param name="renderer"></param>
-        private void DrawFadeNone(Renderer renderer) { scene.Draw(renderer); }
+        private void DrawFadeNone(Renderer renderer)
+        { scene.Draw(renderer); }
 
         /// <summary>
         /// エフェクト描画
@@ -169,9 +176,9 @@ namespace LS.Scene
         private void DrawEffect(Renderer renderer, float alpha)
         {
             renderer.Begin();
-            //renderer.DrawTexture("fade", Vector2.Zero, null, 0.0f, Vector2.Zero,
-            //    new Vector2(Screen.Width, Screen.Height),
-            //    SpriteEffects.None, 0.0f, alpha);
+            renderer.DrawTexture("fade", Vector2.Zero, null, 0.0f, Vector2.Zero,
+                new Vector2(Screen.Width, Screen.Height),
+                SpriteEffects.None, 0.0f, alpha);
             renderer.End();
         }
 
