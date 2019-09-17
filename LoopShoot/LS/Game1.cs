@@ -1,9 +1,12 @@
 ﻿// このファイルで必要なライブラリのnamespaceを指定
+using LS.Actor;
+using LS.Def;
 using LS.Device;
 using LS.Scene;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 /// <summary>
 /// プロジェクト名がnamespaceとなります
@@ -22,6 +25,9 @@ namespace LS
         private SceneManager sceneManager;
         private GameDevice gameDevice;
         private Renderer renderer;
+
+        private List<Pillar> pillars;
+
         /// <summary>
         /// コンストラクタ
         /// （new で実体生成された際、一番最初に一回呼び出される）
@@ -32,6 +38,11 @@ namespace LS
             graphicsDeviceManager = new GraphicsDeviceManager(this);
             //コンテンツデータ（リソースデータ）のルートフォルダは"Contentに設定
             Content.RootDirectory = "Content";
+
+            graphicsDeviceManager.PreferredBackBufferWidth = Screen.Width;
+            graphicsDeviceManager.PreferredBackBufferHeight = Screen.Height;
+
+            IsMouseVisible = true; //マウスの表示
 
             Window.Title = "LoopShooter";
         }
@@ -47,9 +58,13 @@ namespace LS
             sceneManager = new SceneManager();
             sceneManager.Add(Scene.Scene.Title, new SceneFader(new Title()));
             IScene addScene = new GamePlay();
+
             sceneManager.Add(Scene.Scene.GamePlay, addScene);
             sceneManager.Add(Scene.Scene.Ending, new SceneFader(new Ending(addScene)));
+            sceneManager.Add(Scene.Scene.GameClear, new SceneFader(new GameClear(addScene)));
+
             sceneManager.Change(Scene.Scene.Title);
+
             // この上にロジックを記述
             base.Initialize();// 親クラスの初期化処理呼び出し。絶対に消すな！！
         }
@@ -65,11 +80,42 @@ namespace LS
 
             // この下にロジックを記述
             string filepath = "./Texture/";
-            //renderer.LoadContent("title");
-            renderer.LoadContent("stage",filepath);
+            renderer.LoadContent("black", filepath);
+            renderer.LoadContent("ending", filepath);
+            renderer.LoadContent("number", filepath);
+            renderer.LoadContent("particle", filepath);
+            renderer.LoadContent("particleBlue", filepath);
+            renderer.LoadContent("particleSmall", filepath);
+            renderer.LoadContent("stage", filepath);
+            renderer.LoadContent("white", filepath);
+            renderer.LoadContent("oikake_enemy_4anime", filepath);
+            renderer.LoadContent("LS", filepath);
+            renderer.LoadContent("pin", filepath);
+            renderer.LoadContent("HeartLife", filepath);
+            renderer.LoadContent("Way", filepath);
+
+
+            //1ピクセルの黒画像（シーンフェーダー用）
+            Texture2D fade = new Texture2D(GraphicsDevice, 1, 1);
+            Color[] colors = new Color[1 * 1];
+            colors[0] = new Color(0, 0, 0);
+            fade.SetData(colors);
+            renderer.LoadContent("fade", fade);
+
+
             Sound sound = gameDevice.GetSound();
             string filepath2 = "./Sound/";
+            sound.LoadBGM("congratulation", filepath2);
+            sound.LoadBGM("endingbgm", filepath2);
+            sound.LoadBGM("gameplaybgm", filepath2);
+            sound.LoadBGM("resultBGM", filepath2);
             sound.LoadBGM("titlebgm", filepath2);
+
+            sound.LoadSE("endingse", filepath2);
+            sound.LoadSE("gameplayse", filepath2);
+            sound.LoadSE("titlese", filepath2);
+
+
             // この上にロジックを記述
         }
 
@@ -99,8 +145,10 @@ namespace LS
                 Exit();
             }
 
+
             // この下に更新ロジックを記述
             gameDevice.Update(gameTime);
+
             sceneManager.Update(gameTime);
             // この上にロジックを記述
             base.Update(gameTime); // 親クラスの更新処理呼び出し。絶対に消すな！！

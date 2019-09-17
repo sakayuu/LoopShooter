@@ -14,11 +14,15 @@ namespace LS.Scene
         private bool IsEndFlag;
         IScene backGroundScene;
         private Sound sound;
+
+
         public Ending(IScene scene)
         {
             IsEndFlag = false;
             backGroundScene = scene;
-            
+            var gameDevice = GameDevice.Instance();
+            sound = gameDevice.GetSound();
+
         }
 
         public void Draw(Renderer renderer)
@@ -26,7 +30,7 @@ namespace LS.Scene
             backGroundScene.Draw(renderer);
 
             renderer.Begin();
-            renderer.DrawTexture("ending", new Vector2(0));
+            renderer.DrawTexture("ending", new Vector2(150, 150));
             renderer.End();
         }
 
@@ -37,7 +41,7 @@ namespace LS.Scene
 
         public bool IsEnd()
         {
-            return IsEndFlag;　
+            return IsEndFlag;
         }
 
         public Scene Next()
