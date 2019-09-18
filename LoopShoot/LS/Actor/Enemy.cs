@@ -22,7 +22,7 @@ namespace LS.Actor
         float speed;
 
         public Enemy(string name, Vector2 pos, int life, Status status)
-            : base("particleSmall")
+            : base("enemy")
         {
             this.name = name;
             position = pos;

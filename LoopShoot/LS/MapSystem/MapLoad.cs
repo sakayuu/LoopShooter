@@ -76,7 +76,7 @@ namespace LS.MapSystem
 
                     if (map[x, y] == Map.Way)
                     {
-                        renderer.DrawTexture("Way", position);
+                        renderer.DrawTexture("michi", position);
                     }
                 }
             }

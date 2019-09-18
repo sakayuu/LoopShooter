@@ -17,7 +17,7 @@ namespace LS.Actor
         float speed;
 
         public Bullet(string name, Vector2 position)
-            : base("black")
+            : base("bullet")
         {
             velocity = Vector2.Zero;
             this.name = name;

@@ -12,7 +12,7 @@ namespace LS.Actor
         public int st;
 
         public Tower(int life, Vector2 pos)
-            : base("pin")
+            : base("tower")
         {
             this.life = life;
             position = pos;

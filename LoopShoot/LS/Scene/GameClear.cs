@@ -31,7 +31,7 @@ namespace LS.Scene
             backGroundScene.Draw(renderer);
 
             renderer.Begin();
-            renderer.DrawTexture("ending", new Vector2(150, 150));
+            renderer.DrawTexture("good", new Vector2(150, 150));
             renderer.End();
         }
 

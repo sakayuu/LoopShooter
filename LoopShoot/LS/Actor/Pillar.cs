@@ -15,7 +15,7 @@ namespace LS.Actor
         public bool hitFlag;
 
         public Pillar(string name, Vector2 pos)
-            : base("white")
+            : base("pillar")
         {
             this.name = name;
 

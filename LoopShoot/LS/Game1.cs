@@ -86,13 +86,18 @@ namespace LS
             renderer.LoadContent("particle", filepath);
             renderer.LoadContent("particleBlue", filepath);
             renderer.LoadContent("particleSmall", filepath);
-            renderer.LoadContent("stage", filepath);
+            renderer.LoadContent("BG", filepath);
             renderer.LoadContent("white", filepath);
             renderer.LoadContent("oikake_enemy_4anime", filepath);
             renderer.LoadContent("LS", filepath);
-            renderer.LoadContent("pin", filepath);
+            renderer.LoadContent("tower", filepath);
             renderer.LoadContent("HeartLife", filepath);
-            renderer.LoadContent("Way", filepath);
+            renderer.LoadContent("michi", filepath);
+            renderer.LoadContent("bullet", filepath);
+            renderer.LoadContent("enemy", filepath);
+            renderer.LoadContent("pillar", filepath);
+            renderer.LoadContent("stage", filepath);
+            renderer.LoadContent("good", filepath);
 
 
             //1ピクセルの黒画像（シーンフェーダー用）

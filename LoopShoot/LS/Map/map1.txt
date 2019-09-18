@@ -1,11 +1,15 @@
-﻿TW                       
- WW                      
-  WWWWWW                 
+﻿       W                 
        W                 
        W                 
        W                 
        W                 
        W                 
-       WWWWWWWW          
-              W          
-              WWWWWWWWWWW
+       WWWWWWWWWWWWW
+       W                 
+       W
+       W            
+       W            
+       W            
+       W            
+       W            
+       W            
