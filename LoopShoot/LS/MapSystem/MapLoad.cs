@@ -11,7 +11,7 @@ namespace LS.MapSystem
 {
     class MapLoad
     {
-        enum Map
+        public enum Map
         {
             None,
             Way,
@@ -80,6 +80,11 @@ namespace LS.MapSystem
                     }
                 }
             }
+        }
+
+        public Map GetMapPanel(int x,int y)
+        {
+            return map[x, y];
         }
     }
 }

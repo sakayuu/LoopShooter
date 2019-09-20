@@ -34,7 +34,7 @@ namespace LS.Actor
 
         public override void Move(Vector2 tPos)
         {
-            speed = 5;
+            speed = 1.5f;
             targetPosition = tPos;
             velocity = targetPosition - position;
             velocity.Normalize();

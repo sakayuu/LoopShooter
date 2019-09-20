@@ -16,8 +16,8 @@ namespace LS.Device
         private static KeyboardState currentKey;
         private static KeyboardState previousKey;
         //マウス
-        private static MouseState currentMouse;
-        private static MouseState previousMouse;
+        private static MouseState currentMouse; //現在のマウスの状態
+        private static MouseState previousMouse; //1フレーム前のマウスの状態
 
         public static void Update()
         {
@@ -100,7 +100,7 @@ namespace LS.Device
             return currentKey.IsKeyDown(key);
         }
 
-        //マウス関連
+        #region マウス関連
         ///<summary>
         ///マウスの左ボタンが押された瞬間か？
         ///</summary>
@@ -114,11 +114,11 @@ namespace LS.Device
         ///<summary>
         ///マウスの左ボタンが離された瞬間か？
         ///</summary>
-        ///<returns>現在押されていて、1フレーム前に押されていたらtrue</returns>
+        ///<returns>現在はなされていて、1フレーム前に押されていたらtrue</returns>
         public static bool IsMouseLBottonUp()
         {
-            return currentMouse.LeftButton == ButtonState.Pressed &&
-                previousMouse.LeftButton == ButtonState.Released;
+            return currentMouse.LeftButton == ButtonState.Released &&
+                previousMouse.LeftButton == ButtonState.Pressed;
         }
 
         ///<summary>
@@ -151,9 +151,9 @@ namespace LS.Device
         }
 
         ///<summary>
-        ///マウスの左ボタンが押されているか？
+        ///マウスの右ボタンが押されているか？
         ///</summary>
-        ///<returns>左ボタンが押されていたらtrue</returns>
+        ///<returns>右ボタンが押されていたらtrue</returns>
         public static bool IsMouseRButton()
         {
             return currentMouse.RightButton == ButtonState.Pressed;
@@ -180,6 +180,6 @@ namespace LS.Device
             return previousMouse.ScrollWheelValue -
                 currentMouse.ScrollWheelValue;
         }
-
+        #endregion
     }
 }
