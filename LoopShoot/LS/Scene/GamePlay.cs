@@ -21,30 +21,20 @@ namespace LS.Scene
     }
     class GamePlay : IScene
     {
-        private CharacterManager characterManager;
-
-        private Stage stage;
-
-        private bool IsEndFlag;
-        private Sound sound;
-
-        public Life life;
-        private MapLoad mapLoad;//
-
-        int pillarCnt;
-        int maxPillarCnt;
-
-        int maxBulletCnt;
-
-        float timeCounter;
-
-        int i, j;
-        int maxI, maxJ;
-
-        int waveCnt;
-
-
-
+        private CharacterManager characterManager; //キャラクター管理クラス
+        private Stage stage; //現在のステージ番号
+        private bool IsEndFlag; //ステージ終了フラグ
+        private Sound sound; //サウンド
+        public Life life; //タワーの体力
+        private MapLoad mapLoad; //現在のマップ
+        int pillarCnt; //ピラーを置いた数
+        int maxPillarCnt; //ピラーを置ける最大値
+        int maxBulletCnt; //弾を生成できる最大値
+        float timeCounter; //時間経過
+        int i, j; //バレットのループに使用
+        int maxI, maxJ; //バレットループに使用
+        int waveCnt; //現在のWaveの
+        
         Vector2 point1, point2, point3;
         Vector2 pPos;
 
