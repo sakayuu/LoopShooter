@@ -11,6 +11,7 @@ namespace LS.Actor
     class CharacterManager
     {
         public Tower tower;
+        public MouseCol mouseCol;
         public List<Character> pillars;
         public List<Character> bullets;
         public List<Character> enemies;
@@ -32,6 +33,9 @@ namespace LS.Actor
             //各リストを生成とクリア
             if (tower != null)
                 tower.Initialize();
+
+            if (mouseCol != null)
+                mouseCol.Initialize();
 
             if (pillars != null)
                 pillars.Clear();
@@ -68,34 +72,46 @@ namespace LS.Actor
             this.tower = tower;
         }
 
+        public void AddMouseCol(MouseCol mouseCol)
+        {
+            this.mouseCol = mouseCol;
+        }
+
         private void HitToCharacters()
         {
-            foreach (var bullet in bullets)
+            foreach (var pillar in pillars)
             {
-                foreach (var pillar in pillars)
+                if (pillar.IsCollision(mouseCol))
+                {
+                    pillar.Hit(mouseCol);
+                    mouseCol.Hit(pillar);
+                }
+                else
+                    mouseCol.putPossibleFlag = true;
+                foreach (var bullet in bullets)
                 {
                     if (bullet.IsCollision(pillar))
                     {
                         pillar.Hit(bullet);
                     }
-                }
-                foreach (var enemy in enemies)
-                {
-                    if (enemy.IsDead())
-                        continue;
-                    //弾が敵に当たってるか？
-                    if (bullet.IsCollision(enemy))
+                    foreach (var enemy in enemies)
                     {
-                        bullet.Hit(enemy);
-                        enemy.damageNum = bullet.GetStatus() + 1;
-                        enemy.Hit(bullet);
-                    }
-                    //タワーに敵が当たってるか？
-                    if (tower.IsCollision(enemy))
-                    {
-                        tower.Hit(enemy);
-                        tower.st = enemy.GetStatus();
-                        enemy.Hit(tower);
+                        if (enemy.IsDead())
+                            continue;
+                        //弾が敵に当たってるか？
+                        if (bullet.IsCollision(enemy))
+                        {
+                            bullet.Hit(enemy);
+                            enemy.damageNum = bullet.GetStatus() + 1;
+                            enemy.Hit(bullet);
+                        }
+                        //タワーに敵が当たってるか？
+                        if (tower.IsCollision(enemy))
+                        {
+                            tower.Hit(enemy);
+                            tower.st = enemy.GetStatus();
+                            enemy.Hit(tower);
+                        }
                     }
                 }
             }
@@ -119,11 +135,13 @@ namespace LS.Actor
         {
             //全キャラクター更新
             tower.Update(gameTime);
-
+            mouseCol.Update(gameTime);
             foreach (var e in enemies)
                 e.Update(gameTime);
             foreach (var b in bullets)
                 b.Update(gameTime);
+            foreach (var p in pillars)
+                p.Update(gameTime);
 
             //追加候補者をリストに追加
             foreach (var newChara in addNewCharacters)
@@ -164,6 +182,7 @@ namespace LS.Actor
         {
             //全キャラ描画
             tower.Draw(renderer);
+            mouseCol.Draw(renderer);
             foreach (var p in pillars)
             {
                 p.Draw(renderer);

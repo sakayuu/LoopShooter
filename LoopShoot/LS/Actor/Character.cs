@@ -24,7 +24,9 @@ namespace LS.Actor
         protected bool isDeadFlag; //死亡フラグ
         public int life; //体力
         public int damageNum;
-        
+
+        public bool putPossibleFlag;
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -57,11 +59,26 @@ namespace LS.Actor
             return false;
         }
 
+        public bool CollisionChackPillar(Character col)
+        {
+            //自分と相手の位置の長さを計算（2点間の距離）
+            float length = (position - col.position).Length();
+            //画像のサイズにより変化
+            //自分半径と相手半径の和
+            float radiusSum = 32f + 32f;
+            //半径の和と距離を比べて、等しいかまたは小さいか（以下か）
+            if (length <= radiusSum && col is Pillar)
+            {
+                return true;
+            }
+            return false;
+        }
+
         public abstract void Initialize();//初期化
         public abstract void Update(GameTime gameTime);//更新
         public abstract void Shutdown();//終了
         public abstract void Hit(Character other);//ヒット通知
-        
+
         public abstract int Damage(int damage); //ダメージを受ける
         public abstract int GetStatus(); //自分のステータスを渡す
         public abstract void Move(Vector2 tPos); //移動
@@ -93,6 +110,6 @@ namespace LS.Actor
         {
             other = position;
         }
-        
+
     }
 }

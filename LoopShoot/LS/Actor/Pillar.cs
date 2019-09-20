@@ -11,9 +11,11 @@ namespace LS.Actor
     class Pillar : Character
     {
         public bool currentFlag;
-        
+
         public bool hitFlag;
 
+        public bool PutFlag;
+        
         public Pillar(string name, Vector2 pos)
             : base("pillar")
         {
@@ -21,22 +23,26 @@ namespace LS.Actor
 
             position = pos;
 
-            hitFlag = false;
+            Initialize();
         }
-        
+
         public override void Draw(Renderer renderer)
         {
             renderer.DrawTexture(name, position);
         }
-        
+
         public override void Initialize()
         {
-            
+            PutFlag = false;
+            hitFlag = false;
+            putPossibleFlag = true;
         }
 
         public override void Update(GameTime gameTime)
         {
             
+
+
         }
 
         public override void Shutdown()
@@ -47,6 +53,8 @@ namespace LS.Actor
         public override void Hit(Character other)
         {
             damageNum++;
+            if (other is MouseCol)
+                putPossibleFlag = false;
         }
 
         public override int Damage(int damage)
@@ -61,7 +69,9 @@ namespace LS.Actor
 
         public override void Move(Vector2 tPos)
         {
-            throw new NotImplementedException();
+            position = tPos;
         }
+
+
     }
 }
