@@ -1,15 +1,15 @@
 ﻿       W                 
-       W                 
-       W                 
-       W                 
-       W                 
-       W                 
-       WWWWWWWWWWWWW
-       W                 
-       W
-       W            
-       W            
-       W            
-       W            
-       W            
-       W            
+       B                 
+       B                 
+       RRRRRB            
+       B    B            
+       B    B            
+       @LLLLLLLLLLLD
+       T                 
+       T
+       T           W
+       T            
+       T           
+       T           
+       T            
+       S            

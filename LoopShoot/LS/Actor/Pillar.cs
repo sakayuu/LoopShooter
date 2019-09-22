@@ -35,7 +35,6 @@ namespace LS.Actor
         {
             PutFlag = false;
             hitFlag = false;
-            putPossibleFlag = true;
         }
 
         public override void Update(GameTime gameTime)
@@ -53,8 +52,8 @@ namespace LS.Actor
         public override void Hit(Character other)
         {
             damageNum++;
-            if (other is MouseCol)
-                putPossibleFlag = false;
+            //if (other is MouseCol)
+            //    putPossibleFlag = false;
         }
 
         public override int Damage(int damage)

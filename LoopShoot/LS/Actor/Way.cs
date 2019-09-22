@@ -7,12 +7,11 @@ using Microsoft.Xna.Framework;
 
 namespace LS.Actor
 {
-    class MouseCol : Character
+    class Way : Character
     {
-        public MouseCol(string name, Vector2 pos)
-            : base("white")
+        public Way(Vector2 pos)
+            :base("michi")
         {
-            this.name = name;
             position = pos;
         }
 
@@ -29,15 +28,12 @@ namespace LS.Actor
 
         public override void Hit(Character other)
         {
-            if (other is Pillar
-                || other is Way
-                || other is TurnPoint)
-                putPossibleFlag = false;
+            throw new NotImplementedException();
         }
 
         public override void Initialize()
         {
-            position = Vector2.Zero;
+            
         }
 
         public override void Move(Vector2 tPos)
@@ -52,7 +48,7 @@ namespace LS.Actor
 
         public override void Update(GameTime gameTime)
         {
-
+            
         }
     }
 }

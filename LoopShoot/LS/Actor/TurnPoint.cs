@@ -7,15 +7,23 @@ using Microsoft.Xna.Framework;
 
 namespace LS.Actor
 {
-    class MouseCol : Character
+    class TurnPoint : Character
     {
-        public MouseCol(string name, Vector2 pos)
-            : base("white")
+        public enum MyDirection
         {
-            this.name = name;
-            position = pos;
+            Up,
+            Down,
+            Left,
+            Right,
         }
 
+        public MyDirection myDirection;
+        public TurnPoint(Vector2 pos, MyDirection myDirection)
+            : base("Way")
+        {
+            position = pos;
+            this.myDirection = myDirection;
+        }
 
         public override int Damage(int damage)
         {
@@ -29,15 +37,13 @@ namespace LS.Actor
 
         public override void Hit(Character other)
         {
-            if (other is Pillar
-                || other is Way
-                || other is TurnPoint)
-                putPossibleFlag = false;
+            //if(other is Enemy)
+
         }
 
         public override void Initialize()
         {
-            position = Vector2.Zero;
+
         }
 
         public override void Move(Vector2 tPos)
@@ -53,6 +59,19 @@ namespace LS.Actor
         public override void Update(GameTime gameTime)
         {
 
+        }
+
+        public Vector2 NextPoint(Vector2 tPos)
+        {
+            if (myDirection == MyDirection.Up)
+                tPos += new Vector2(0, -64);
+            else if (myDirection == MyDirection.Down)
+                tPos += new Vector2(0, +64);
+            else if (myDirection == MyDirection.Left)
+                tPos += new Vector2(-64, 0);
+            else if (myDirection == MyDirection.Right)
+                tPos += new Vector2(64, 0);
+            return tPos;
         }
     }
 }

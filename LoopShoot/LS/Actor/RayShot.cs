@@ -3,19 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LS.Device;
 using Microsoft.Xna.Framework;
 
 namespace LS.Actor
 {
-    class MouseCol : Character
+    class RayShot : Character
     {
-        public MouseCol(string name, Vector2 pos)
-            : base("white")
+        float speed;
+        Vector2 velocity;
+
+        public RayShot(string name, Vector2 pos)
+            :base("particle")
         {
             this.name = name;
             position = pos;
+            
         }
-
 
         public override int Damage(int damage)
         {
@@ -29,10 +33,8 @@ namespace LS.Actor
 
         public override void Hit(Character other)
         {
-            if (other is Pillar
-                || other is Way
-                || other is TurnPoint)
-                putPossibleFlag = false;
+            if (other is MouseCol)
+                IsDead();
         }
 
         public override void Initialize()
@@ -42,7 +44,10 @@ namespace LS.Actor
 
         public override void Move(Vector2 tPos)
         {
-            throw new NotImplementedException();
+            speed = 10f;
+            velocity = tPos - position;
+            velocity.Normalize();
+            position = position + velocity * speed;
         }
 
         public override void Shutdown()
@@ -52,7 +57,12 @@ namespace LS.Actor
 
         public override void Update(GameTime gameTime)
         {
+            
+        }
 
+        public override void Draw(Renderer renderer)
+        {
+            renderer.DrawTexture(name, position);
         }
     }
 }

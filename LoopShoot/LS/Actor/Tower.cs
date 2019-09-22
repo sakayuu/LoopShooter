@@ -16,7 +16,6 @@ namespace LS.Actor
         {
             this.life = life;
             position = pos;
-            Initialize();
         }
 
         public override void Hit(Character other)

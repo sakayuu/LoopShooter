@@ -10,14 +10,15 @@ using Microsoft.Xna.Framework;
 using LS.Actor;
 using System.Threading;
 using LS.MapSystem;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace LS.Scene
 {
     enum Stage
     {
-        S1,
-        S2,
-        S3,
+        S1, //ステージ1
+        S2, //ステージ2
+        S3, //ステージ3
     }
     class GamePlay : IScene
     {
@@ -33,40 +34,34 @@ namespace LS.Scene
         float timeCounter; //時間経過
         int i, j; //バレットのループに使用
         int maxI, maxJ; //バレットループに使用
-        int waveCnt; //現在のWaveの
-        
-        Vector2 point1, point2, point3;
-        Vector2 pPos;
+        int waveCnt; //現在のWave
 
-        int maxEnemy;
-        int maxEnemy2;
-        int maxEnemy3;
+        int enemyCnt; //現在何体敵が出現したか
 
-        int enemyCnt;
+        Dictionary<Vector2, int> points = new Dictionary<Vector2, int>();
+        Dictionary<string, List<Vector2>> spP = new Dictionary<string, List<Vector2>>();
 
-        bool clearFlag;
+        bool clearFlag; //ゲームクリア条件を満たしているか
 
-        bool instanceFlag;
+        bool waveClearFlag;
 
-        bool putFlag;
+        float rotation;
 
         public GamePlay()
         {
             IsEndFlag = false;
-            var gameDevice = GameDevice.Instance();
-            sound = gameDevice.GetSound();
+            var gameDevice = GameDevice.Instance(); //ゲームデバイスクラスを生成
+            sound = gameDevice.GetSound(); //サウンドクラス
         }
 
         public void Draw(Renderer renderer)
         {
-            renderer.Begin();
-
-            renderer.DrawTexture("BG", Vector2.Zero);
-            mapLoad.Draw(renderer);
-            characterManager.Draw(renderer);
-            life.Draw(renderer);
-
-            renderer.End();
+            renderer.Begin(); //描画開始
+            mapLoad.Draw(renderer); //マップ
+            characterManager.Draw(renderer); //キャラクター一括描画
+            renderer.DrawTexture("enemy", Vector2.Zero, null, rotation, new Vector2(27, 32), Vector2.One, SpriteEffects.None, 0);
+            life.Draw(renderer); //体力を描画
+            renderer.End(); //描画終了
         }
 
         public void Initialize()
@@ -74,25 +69,30 @@ namespace LS.Scene
             IsEndFlag = false;
             clearFlag = false;
             characterManager = new CharacterManager();
+            spP.Clear();
 
-            mapLoad = new MapLoad();
-            mapLoad.LoadMap(1);
+            mapLoad = new MapLoad(); //マップクラスの作成
+            mapLoad.LoadMap(1); //マップの1番目をロード
 
-            Tower tower = new Tower(3, new Vector2(448, 384));
-            characterManager.AddTower(tower);
+            List<TurnPoint> mpts = mapLoad.CreateTP(); //エネミーの通り道
+            spP = new Dictionary<string, List<Vector2>>(mapLoad.CreateSpawnP());
+            foreach (var mpl in mpts)
+                characterManager.AddTurnPoint(mpl);
+            Tower tower = new Tower(3, mapLoad.CreateTower()); //タワーを生成
+            characterManager.AddTower(tower); //
             life = new Life(characterManager.tower.life, new Vector2(50, 800));
 
-            MouseCol mouseCol = new MouseCol("white", Vector2.Zero);
+            MouseCol mouseCol = new MouseCol("white", Input.MousePosition);
             characterManager.AddMouseCol(mouseCol);
 
-            stage = Stage.S1;
+            stage = Stage.S1; //現在のステージ
 
-            waveCnt = 1;
+            waveCnt = 1; //現在のウェーブ
 
-            pillarCnt = 0;
+            pillarCnt = 0; //ピラーを置いた数（0で初期化）
 
             maxPillarCnt = 3;
-            maxBulletCnt = 2;
+            maxBulletCnt = 2; //弾を発射できる最大数
 
             timeCounter = 0;
 
@@ -100,22 +100,27 @@ namespace LS.Scene
             j = 0;
             maxI = 0;
             maxJ = 0;
+            waveClearFlag = false;
 
-            SetPoint(stage);
-            SetMaxEnemy(stage);
+            SetPointMaxNum(stage);
 
             enemyCnt = 0;
 
-            instanceFlag = true;
-            putFlag = false;
-
         }
 
+        /// <summary>
+        /// 現在のシーンを終了
+        /// </summary>
+        /// <returns></returns>
         public bool IsEnd()
         {
             return IsEndFlag;
         }
 
+        /// <summary>
+        /// 現在のシーンから移行
+        /// </summary>
+        /// <returns></returns>
         public Scene Next()
         {
             Scene nextScene = Scene.Ending;
@@ -128,39 +133,54 @@ namespace LS.Scene
 
         public void Update(GameTime gameTime)
         {
+            rotation += 0.1f;
             timeCounter += 0.1f;
+            characterManager.Update(gameTime);
+
             switch (waveCnt)
             {
                 case 1:
-                    if (enemyCnt < maxEnemy) //敵を出現)
+                    if (CountCheck(timeCounter))
                     {
-                        timeCounter = SpawnEnemy(timeCounter, point1, point2, point3, stage, waveCnt);
+                        SpawnEnemy(points[spP["上"][0]], enemyCnt, spP["上"][0]);
+                        enemyCnt++;
+                        timeCounter = 0;
                     }
-                    else if (enemyCnt >= maxEnemy
+                    else if (enemyCnt >= points[spP["上"][0]]
                         && characterManager.enemies.Count == 0)
                     {
                         waveCnt++;
                         enemyCnt = 0;
+                        waveClearFlag = true;
                     }
                     break;
                 case 2:
-                    if (enemyCnt < maxEnemy2)
+                    waveClearFlag = WaveClear(waveClearFlag);
+                    if (CountCheck(timeCounter))
                     {
-                        timeCounter = SpawnEnemy(timeCounter, point1, point2, point3, stage, waveCnt);
+                        SpawnEnemy(points[spP["上"][0]], enemyCnt, spP["上"][0]);
+                        SpawnEnemy(points[spP["右"][0]], enemyCnt, spP["右"][0]);
+                        enemyCnt++;
+                        timeCounter = 0;
                     }
-                    else if (enemyCnt >= maxEnemy2
+                    else if (enemyCnt >= points[spP["右"][0]]
                         && characterManager.enemies.Count == 0)
                     {
                         waveCnt++;
                         enemyCnt = 0;
+                        waveClearFlag = true;
                     }
                     break;
                 case 3:
-                    if (enemyCnt < maxEnemy3)
+                    waveClearFlag = WaveClear(waveClearFlag);
+                    if (CountCheck(timeCounter))
                     {
-                        timeCounter = SpawnEnemy(timeCounter, point1, point2, point3, stage, waveCnt);
+                        SpawnEnemy(points[spP["上"][0]], enemyCnt, spP["上"][0]);
+                        SpawnEnemy(points[spP["右"][0]], enemyCnt, spP["右"][0]);
+                        enemyCnt++;
+                        timeCounter = 0;
                     }
-                    else if (enemyCnt >= maxEnemy3
+                    else if (enemyCnt >= points[spP["右"][0]]
                         && characterManager.enemies.Count == 0)
                     {
                         clearFlag = true;
@@ -171,7 +191,6 @@ namespace LS.Scene
                     break;
             }
 
-            characterManager.Update(gameTime);
 
             life.GetLife(characterManager.tower.life);
             life.Update(gameTime);
@@ -181,27 +200,20 @@ namespace LS.Scene
             if (characterManager.tower.life <= 0)
                 IsEndFlag = true;
 
-            if (Input.IsMouseLBottonDown())
-            {
-                if (pillarCnt <= 0)
+            if (pillarCnt >= 1)
+                foreach (var p in characterManager.pillars)
                 {
-                    characterManager.Add(new Pillar("pillar", Input.MousePosition + new Vector2(-32, -32)));
-                    putFlag = true;
-                    pillarCnt++;
-                    instanceFlag = true;
+                    characterManager.AddRay(new RayShot("particle", p.position));
+                    foreach (var rs in characterManager.rayShots)
+                        rs.Move(Input.MousePosition);
                 }
-                else
-                {
-                    if (characterManager.mouseCol.putPossibleFlag)
-                    {
-                        characterManager.Add(new Pillar("pillar", Input.MousePosition + new Vector2(-32, -32)));
-                        putFlag = true;
-                        pillarCnt++;
-                        instanceFlag = true;
-                    }
-                }
-            }
 
+            if (Input.IsMouseLBottonDown()
+                && characterManager.mouseCol.putPossibleFlag)
+            {
+                characterManager.Add(new Pillar("pillar", Input.MousePosition + new Vector2(-32, -32)));
+                pillarCnt++;
+            }
             if (characterManager.pillars.Count >= 3
                 && characterManager.bullets.Count < maxBulletCnt
                 && Input.IsMouseRBottonDown())
@@ -213,11 +225,8 @@ namespace LS.Scene
                     maxJ = pillarCnt;
             }
 
-            if (characterManager.bullets.Count >= 0)
+            if (characterManager.bullets.Count > 0)
             {
-                foreach (var e in characterManager.enemies)
-                    e.Move(characterManager.tower.position);
-
                 foreach (var b in characterManager.bullets)
                 {
                     if (b == characterManager.bullets[0])
@@ -228,7 +237,6 @@ namespace LS.Scene
                         if (characterManager.pillars[i].IsCollision(characterManager.bullets[0]))
                             i++;
                     }
-
                     else if (b == characterManager.bullets[1])
                     {
                         if (j >= maxJ)
@@ -242,37 +250,17 @@ namespace LS.Scene
         }
 
 
-        public float SpawnEnemy(float timeCounter, Vector2 pos, Vector2 pos2, Vector2 pos3, Stage st, int waveCnt)
+        public void SpawnEnemy(int maxEnCnt, int enemyCnt, Vector2 poi)
         {
-            if (CountCheck(timeCounter))
-            {
-                enemyCnt++;
-                if (st == Stage.S1)
-                {
-                    if (waveCnt == 1)
-                        characterManager.Add(new Enemy("enemy", pos, 1, 0));
-                    else if (waveCnt == 2)
-                    {
-                        characterManager.Add(new Enemy("enemy", pos, 1, 0));
-                        characterManager.Add(new Enemy("enemy", pos2, 1, 0));
-                    }
-                    else if (waveCnt == 3)
-                    {
-                        characterManager.Add(new Enemy("enemy", pos, 1, 0));
-                        characterManager.Add(new Enemy("enemy", pos2, 1, 0));
-                    }
-
-                }
-                else if (st == Stage.S2)
-                {
-                    characterManager.Add(new Enemy("enemy", pos, 1, 0));
-                    characterManager.Add(new Enemy("enemy", pos2, 1, 0));
-                }
-                timeCounter = 0;
-            }
-            return timeCounter;
+            if (maxEnCnt > enemyCnt)
+                characterManager.Add(new Enemy("enemy", poi, 1, 0));
         }
 
+        /// <summary>
+        /// エネミーの出現間隔
+        /// </summary>
+        /// <param name="timeCounter">時間経過</param>
+        /// <returns></returns>
         public bool CountCheck(float timeCounter)
         {
             if (timeCounter >= 3) //6で一秒、3で半分の0.5秒
@@ -281,59 +269,51 @@ namespace LS.Scene
                 return false;
         }
 
-        public void SetPoint(Stage st)
+        /// <summary>
+        /// ステージごとの出現最大値をセット
+        /// </summary>
+        /// <param name="st">ステージ番号</param>
+        public void SetPointMaxNum(Stage st)
         {
             if (st == Stage.S1)
             {
-                point1 = new Vector2(448, 0);
-                point2 = new Vector2(1280, 384);
-                point3 = new Vector2(448, 960);
+                points.Clear();
+                points.Add(spP["上"][0], 4);
+                points.Add(spP["右"][0], 6);
+                points.Add(spP["下"][0], 2);
             }
-            else if (st == Stage.S2)
-            {
-                point1 = Vector2.Zero;
-                point2 = Vector2.Zero;
-                point3 = Vector2.Zero;
-            }
-            else if (st == Stage.S3)
-            {
-                point1 = Vector2.Zero;
-                point2 = Vector2.Zero;
-                point3 = Vector2.Zero;
-            }
+
+
+
+
+
+            //else if (st == Stage.S2)
+            //{
+            //    point1 = Vector2.Zero;
+            //    point2 = Vector2.Zero;
+            //    point3 = Vector2.Zero;
+            //}
+            //else if (st == Stage.S3)
+            //{
+            //    point1 = Vector2.Zero;
+            //    point2 = Vector2.Zero;
+            //    point3 = Vector2.Zero;
+            //}
         }
 
-        public void SetMaxEnemy(Stage st)
+        public bool WaveClear(bool clearFlag)
         {
-            if (st == Stage.S1)
+            if (clearFlag)
             {
-                maxEnemy = 4;
-                maxEnemy2 = 6;
-                maxEnemy3 = 8;
+                characterManager.bullets.Clear();
+                characterManager.pillars.Clear();
+                
+                pillarCnt = 0;
+                clearFlag = false;
             }
-            else if (st == Stage.S2)
-            {
-                maxEnemy = 4;
-                maxEnemy2 = 4;
-                maxEnemy3 = 4;
-            }
-            else if (st == Stage.S3)
-            {
-                maxEnemy = 4;
-                maxEnemy2 = 4;
-                maxEnemy3 = 4;
-            }
+            return clearFlag;
         }
 
-        public int SpawnEnemyPos(int spEnCnt, Vector2 pos)
-        {
-            int i;
-            for (i = 0; i < spEnCnt; i++)
-            {
-                characterManager.Add(new Enemy("enemy", pos, 1, 0));
-            }
-            return 1;
-        }
 
 
     }

@@ -16,6 +16,11 @@ namespace LS.Actor
         public List<Character> bullets;
         public List<Character> enemies;
         public List<Character> addNewCharacters;
+        public List<TurnPoint> turnPoints;
+        public List<RayShot> rayShots;
+
+
+        bool wFlag1, wFlag2, wFlag3;
 
         /// <summary>
         /// コンストラクタ
@@ -37,6 +42,11 @@ namespace LS.Actor
             if (mouseCol != null)
                 mouseCol.Initialize();
 
+            if (rayShots != null)
+                rayShots.Clear();
+            else
+                rayShots = new List<RayShot>();
+
             if (pillars != null)
                 pillars.Clear();
             else
@@ -52,10 +62,16 @@ namespace LS.Actor
             else
                 enemies = new List<Character>();
 
+            if (turnPoints != null)
+                turnPoints.Clear();
+            else
+                turnPoints = new List<TurnPoint>();
+            
             if (addNewCharacters != null)
                 addNewCharacters.Clear();
             else
                 addNewCharacters = new List<Character>();
+            wFlag1 = true; wFlag2 = true; wFlag3 = true;
         }
 
         public void Add(Character character)
@@ -69,25 +85,35 @@ namespace LS.Actor
 
         public void AddTower(Tower tower)
         {
+            tower.Initialize();
             this.tower = tower;
         }
 
         public void AddMouseCol(MouseCol mouseCol)
         {
+            mouseCol.Initialize();
             this.mouseCol = mouseCol;
         }
 
+        public void AddRay(RayShot rayShot)
+        {
+            if (rayShot == null)
+                return;
+            rayShots.Add(rayShot);
+        }
+
+        public void AddTurnPoint(TurnPoint turnPoint)
+        {
+            if (turnPoint == null)
+                return;
+            turnPoint.Initialize();
+            turnPoints.Add(turnPoint);
+        }
+        
         private void HitToCharacters()
         {
             foreach (var pillar in pillars)
             {
-                if (pillar.IsCollision(mouseCol))
-                {
-                    pillar.Hit(mouseCol);
-                    mouseCol.Hit(pillar);
-                }
-                else
-                    mouseCol.putPossibleFlag = true;
                 foreach (var bullet in bullets)
                 {
                     if (bullet.IsCollision(pillar))
@@ -118,6 +144,64 @@ namespace LS.Actor
         }
 
         /// <summary>
+        /// エネミーに道を歩かせる処理
+        /// </summary>
+        public void HitToWay()
+        {
+            foreach (var p in turnPoints)
+            {
+                foreach (var enemy in enemies)
+                {
+                    if (p.IsCollision(enemy))
+                    {
+                        p.Hit(enemy);
+                        enemy.Hit(p);
+                        enemy.Move(p.NextPoint(enemy.position));
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 道があるとピラー置けなくする処理
+        /// </summary>
+        public void HitToWaysAndMouse()
+        {
+            if (wFlag1 && wFlag2 && wFlag3)
+                mouseCol.putPossibleFlag = true;
+            else
+                mouseCol.putPossibleFlag = false;
+            
+            foreach (var tp in turnPoints)
+            {
+                if (tp.IsCollision(mouseCol))
+                {
+                    mouseCol.Hit(tp);
+                    wFlag2 = false;
+                }
+                else
+                    wFlag2 = true;
+            }
+            foreach (var pillar in pillars)
+            {
+                foreach (var rs in rayShots)
+                {
+                    if (tower.IsCollision(rs))
+                        mouseCol.Hit(pillar);
+                    else if (rs.IsCollision(mouseCol))
+                        rs.Hit(mouseCol);
+                }
+                if (pillar.IsCollision(mouseCol))
+                {
+                    mouseCol.Hit(pillar);
+                    wFlag3 = false;
+                }
+                else
+                    wFlag3 = true;
+            }
+        }
+
+        /// <summary>
         /// 死亡キャラの削除
         /// </summary>
         private void RemoveDeadCharacters()
@@ -136,13 +220,16 @@ namespace LS.Actor
             //全キャラクター更新
             tower.Update(gameTime);
             mouseCol.Update(gameTime);
+            //rayShot.Update(gameTime);
+            foreach (var tp in turnPoints)
+                tp.Update(gameTime);
             foreach (var e in enemies)
                 e.Update(gameTime);
             foreach (var b in bullets)
                 b.Update(gameTime);
             foreach (var p in pillars)
                 p.Update(gameTime);
-
+            
             //追加候補者をリストに追加
             foreach (var newChara in addNewCharacters)
             {
@@ -168,6 +255,8 @@ namespace LS.Actor
             addNewCharacters.Clear();
 
             //当たり判定
+            HitToWay();
+            HitToWaysAndMouse();
             HitToCharacters();
 
             //死亡フラグが立っていたら削除
@@ -183,18 +272,15 @@ namespace LS.Actor
             //全キャラ描画
             tower.Draw(renderer);
             mouseCol.Draw(renderer);
+            //foreach (var rs in rayShots)
+            //    rs.Draw(renderer);
             foreach (var p in pillars)
-            {
                 p.Draw(renderer);
-            }
             foreach (var e in enemies)
-            {
                 e.Draw(renderer);
-            }
             foreach (var b in bullets)
-            {
                 b.Draw(renderer);
-            }
+
         }
 
     }

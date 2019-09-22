@@ -98,6 +98,8 @@ namespace LS
             renderer.LoadContent("pillar", filepath);
             renderer.LoadContent("stage", filepath);
             renderer.LoadContent("good", filepath);
+            renderer.LoadContent("field", filepath);
+            renderer.LoadContent("Way", filepath);
 
 
             //1ピクセルの黒画像（シーンフェーダー用）

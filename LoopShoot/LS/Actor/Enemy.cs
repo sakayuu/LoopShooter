@@ -74,14 +74,14 @@ namespace LS.Actor
             {
                 life = Damage(damageNum);
             }
-            else
+            else if(other is Tower)
                 life = 0;
 
             if (life <= 0)
             {
                 isDeadFlag = true;
-
             }
+            
         }
 
         public override int GetStatus()

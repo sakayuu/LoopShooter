@@ -263,6 +263,5 @@ namespace LS.Device
                 );
         }
         
-
     }
 }

@@ -47,7 +47,10 @@
     <Compile Include="Actor\MouseCol.cs" />
     <Compile Include="Actor\Enemy.cs" />
     <Compile Include="Actor\Pillar.cs" />
+    <Compile Include="Actor\RayShot.cs" />
     <Compile Include="Actor\Tower.cs" />
+    <Compile Include="Actor\TurnPoint.cs" />
+    <Compile Include="Actor\Way.cs" />
     <Compile Include="Def\Screen.cs" />
     <Compile Include="Device\GameDevice.cs" />
     <Compile Include="Device\Input.cs" />
