@@ -100,6 +100,8 @@ namespace LS
             renderer.LoadContent("good", filepath);
             renderer.LoadContent("field", filepath);
             renderer.LoadContent("Way", filepath);
+            renderer.LoadContent("titleback", filepath);
+
 
 
             //1ピクセルの黒画像（シーンフェーダー用）
