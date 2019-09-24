@@ -57,6 +57,7 @@ namespace LS
 
             sceneManager = new SceneManager();
             sceneManager.Add(Scene.Scene.Title, new SceneFader(new Title()));
+            sceneManager.Add(Scene.Scene.StageSelect, new SceneFader(new StageSelect()));
             IScene addScene = new GamePlay();
 
             sceneManager.Add(Scene.Scene.GamePlay, addScene);
@@ -100,7 +101,18 @@ namespace LS
             renderer.LoadContent("good", filepath);
             renderer.LoadContent("field", filepath);
             renderer.LoadContent("Way", filepath);
+            renderer.LoadContent("titleBG", filepath);
             renderer.LoadContent("titleback", filepath);
+            renderer.LoadContent("titleLogo", filepath);
+            renderer.LoadContent("titleStart", filepath);
+            renderer.LoadContent("selectBG", filepath);
+            renderer.LoadContent("selectLogo", filepath);
+            renderer.LoadContent("1", filepath);
+            renderer.LoadContent("2", filepath);
+            renderer.LoadContent("3", filepath);
+            renderer.LoadContent("gameclear", filepath);
+            renderer.LoadContent("gameover", filepath);
+            renderer.LoadContent("clickUI", filepath);
 
 
 
@@ -119,10 +131,16 @@ namespace LS
             sound.LoadBGM("gameplaybgm", filepath2);
             sound.LoadBGM("resultBGM", filepath2);
             sound.LoadBGM("titlebgm", filepath2);
-
             sound.LoadSE("endingse", filepath2);
             sound.LoadSE("gameplayse", filepath2);
             sound.LoadSE("titlese", filepath2);
+
+            
+            sound.LoadBGM("build", filepath2);
+            sound.LoadBGM("damage", filepath2);
+            sound.LoadBGM("hit", filepath2);
+            sound.LoadBGM("shot", filepath2);
+
 
 
             // この上にロジックを記述

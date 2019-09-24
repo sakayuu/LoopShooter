@@ -14,7 +14,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace LS.Scene
 {
-    enum Stage
+    public enum Stage
     {
         S1, //ステージ1
         S2, //ステージ2
@@ -23,7 +23,7 @@ namespace LS.Scene
     class GamePlay : IScene
     {
         private CharacterManager characterManager; //キャラクター管理クラス
-        private Stage stage; //現在のステージ番号
+        public static Stage stage; //現在のステージ番号
         private bool IsEndFlag; //ステージ終了フラグ
         private Sound sound; //サウンド
         public Life life; //タワーの体力
@@ -45,7 +45,7 @@ namespace LS.Scene
 
         bool waveClearFlag;
 
-        float rotation;
+
 
         public GamePlay()
         {
@@ -59,7 +59,7 @@ namespace LS.Scene
             renderer.Begin(); //描画開始
             mapLoad.Draw(renderer); //マップ
             characterManager.Draw(renderer); //キャラクター一括描画
-            renderer.DrawTexture("enemy", Vector2.Zero, null, rotation, new Vector2(27, 32), Vector2.One, SpriteEffects.None, 0);
+
             life.Draw(renderer); //体力を描画
             renderer.End(); //描画終了
         }
@@ -82,7 +82,7 @@ namespace LS.Scene
             characterManager.AddTower(tower); //
             life = new Life(characterManager.tower.life, new Vector2(50, 800));
 
-            MouseCol mouseCol = new MouseCol("white", Input.MousePosition);
+            MouseCol mouseCol = new MouseCol("clickUI", Input.MousePosition);
             characterManager.AddMouseCol(mouseCol);
 
             stage = Stage.S1; //現在のステージ
@@ -133,7 +133,6 @@ namespace LS.Scene
 
         public void Update(GameTime gameTime)
         {
-            rotation += 0.1f;
             timeCounter += 0.1f;
             characterManager.Update(gameTime);
 
@@ -195,7 +194,7 @@ namespace LS.Scene
             life.GetLife(characterManager.tower.life);
             life.Update(gameTime);
 
-            characterManager.mouseCol.position = Input.MousePosition + new Vector2(-32, -32);
+            characterManager.mouseCol.position = Input.MousePosition + new Vector2(-60, 0);
 
             if (characterManager.tower.life <= 0)
                 IsEndFlag = true;
@@ -213,6 +212,7 @@ namespace LS.Scene
             {
                 characterManager.Add(new Pillar("pillar", Input.MousePosition + new Vector2(-32, -32)));
                 pillarCnt++;
+                //sound.PlayBGM("build");
             }
             if (characterManager.pillars.Count >= 3
                 && characterManager.bullets.Count < maxBulletCnt
@@ -282,11 +282,7 @@ namespace LS.Scene
                 points.Add(spP["右"][0], 6);
                 points.Add(spP["下"][0], 2);
             }
-
-
-
-
-
+            
             //else if (st == Stage.S2)
             //{
             //    point1 = Vector2.Zero;
@@ -307,7 +303,7 @@ namespace LS.Scene
             {
                 characterManager.bullets.Clear();
                 characterManager.pillars.Clear();
-                
+
                 pillarCnt = 0;
                 clearFlag = false;
             }

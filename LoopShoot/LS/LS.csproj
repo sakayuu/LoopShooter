@@ -69,6 +69,7 @@
     <Compile Include="Scene\Scene.cs" />
     <Compile Include="Scene\SceneFader.cs" />
     <Compile Include="Scene\SceneManager.cs" />
+    <Compile Include="Scene\StageSelect.cs" />
     <Compile Include="Scene\TimerUI.cs" />
     <Compile Include="Scene\Title.cs" />
     <Compile Include="Util\CountDownTimer.cs" />

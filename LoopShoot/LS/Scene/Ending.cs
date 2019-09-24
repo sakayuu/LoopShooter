@@ -30,7 +30,7 @@ namespace LS.Scene
             backGroundScene.Draw(renderer);
 
             renderer.Begin();
-            renderer.DrawTexture("ending", new Vector2(150, 150));
+            renderer.DrawTexture("gameover", new Vector2(150, 150));
             renderer.End();
         }
 

@@ -9,6 +9,7 @@ namespace LS.Scene
     enum Scene
     {
         Title,
+        StageSelect,
         GamePlay,
         GameClear,
         Ending,
